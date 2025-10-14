@@ -163,12 +163,17 @@ class SkillsSection extends StatelessWidget {
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: categoryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: categoryColor.withValues(alpha: 0.3)),
       ),
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
@@ -178,8 +183,22 @@ class SkillsSection extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          if (skill.description != null) ...[
-            const SizedBox(width: 8),
+          const SizedBox(width: 8),
+          Spacer(),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(5, (index) {
+              return Icon(
+                index < skill.proficiencyLevel ? Icons.star : Icons.star_border,
+                size: 12,
+                color: categoryColor,
+              );
+            }),
+          ),
+        ],
+      ),
+ if (skill.description != null) ...[
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
@@ -194,19 +213,8 @@ class SkillsSection extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-          const SizedBox(width: 8),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(5, (index) {
-              return Icon(
-                index < skill.proficiencyLevel ? Icons.star : Icons.star_border,
-                size: 12,
-                color: categoryColor,
-              );
-            }),
-          ),
-        ],
+ ],
+        ]
       ),
     );
   }

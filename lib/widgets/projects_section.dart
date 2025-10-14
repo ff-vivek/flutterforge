@@ -10,11 +10,13 @@ class ProjectsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = ResponsiveBreakpoints.of(context).isDesktop;
+    final width = MediaQuery.of(context).size.width;
+    final isMobile = width <= 450;
+    final isTablet = width > 450 && width <= 800;
+    final isDesktop = width > 800;
     final theme = Theme.of(context);
     final projects = PortfolioService.getProjects();
     final featuredProjects = projects.where((p) => p.isFeatured).toList();
-
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isDesktop ? 80 : 32,
@@ -48,28 +50,47 @@ class ProjectsSection extends StatelessWidget {
             
             const SizedBox(height: 60),
             
-            // Featured Projects Grid
-            ResponsiveGridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: ResponsiveGridDelegate(
-                crossAxisExtent: isDesktop ? 400 : 350,
-                mainAxisSpacing: 32,
-                crossAxisSpacing: 32,
-                childAspectRatio: isDesktop ? 0.8 : 0.9,
+            // Featured Projects Grid/Column
+            if (isDesktop || isTablet)
+              ResponsiveGridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: ResponsiveGridDelegate(
+                  crossAxisExtent: isTablet ? 350 : 400,
+                  mainAxisSpacing: 32,
+                  crossAxisSpacing: 32,
+                  childAspectRatio: 0.9,
+                  minCrossAxisExtent: 100,
+                ),
+                itemCount: featuredProjects.length,
+                itemBuilder: (context, index) {
+                  final project = featuredProjects[index];
+                  final delay = Duration(milliseconds: 200 + (index * 150));
+                  
+                  return FadeInUp(
+                    delay: delay,
+                    duration: const Duration(milliseconds: 600),
+                    child: _buildProjectCard(context, project, !isMobile),
+                  );
+                },
+              )
+            else
+              Column(
+                children: featuredProjects.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final project = entry.value;
+                  final delay = Duration(milliseconds: 200 + (index * 150));
+                  
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    child: FadeInUp(
+                      delay: delay,
+                      duration: const Duration(milliseconds: 600),
+                      child: _buildProjectCard(context, project, false),
+                    ),
+                  );
+                }).toList(),
               ),
-              itemCount: featuredProjects.length,
-              itemBuilder: (context, index) {
-                final project = featuredProjects[index];
-                final delay = Duration(milliseconds: 200 + (index * 150));
-                
-                return FadeInUp(
-                  delay: delay,
-                  duration: const Duration(milliseconds: 600),
-                  child: _buildProjectCard(context, project, isDesktop),
-                );
-              },
-            ),
             
             const SizedBox(height: 40),
             
@@ -86,8 +107,12 @@ class ProjectsSection extends StatelessWidget {
   Widget _buildProjectCard(BuildContext context, Project project, bool isDesktop) {
     final theme = Theme.of(context);
     
-    return Container(
-      decoration: BoxDecoration(
+    return SizedBox(
+      width: double.infinity,
+      height: isDesktop ? null : 420,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
@@ -229,6 +254,7 @@ class ProjectsSection extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

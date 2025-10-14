@@ -47,21 +47,18 @@ class ExperienceSection extends StatelessWidget {
             const SizedBox(height: 60),
             
             // Experience Timeline
-            Container(
-              constraints: const BoxConstraints(maxWidth: 1000),
-              child: Column(
-                children: experiences.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final experience = entry.value;
-                  final delay = Duration(milliseconds: 200 + (index * 150));
-                  
-                  return FadeInUp(
-                    delay: delay,
-                    duration: const Duration(milliseconds: 600),
-                    child: _buildExperienceCard(context, experience, isDesktop),
-                  );
-                }).toList(),
-              ),
+            Column(
+              children: experiences.asMap().entries.map((entry) {
+                final index = entry.key;
+                final experience = entry.value;
+                final delay = Duration(milliseconds: 200 + (index * 150));
+                
+                return FadeInUp(
+                  delay: delay,
+                  duration: const Duration(milliseconds: 600),
+                  child: _buildExperienceCard(context, experience, isDesktop),
+                );
+              }).toList(),
             ),
           ],
         ),

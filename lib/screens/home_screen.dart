@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Section keys
   final GlobalKey _aboutKey = GlobalKey();
@@ -57,6 +58,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _scrollTo(GlobalKey key) async {
     final context = key.currentContext;
     if (context == null) return;
+    
+    // Close drawer if open (for mobile)
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      Navigator.of(this.context).pop();
+    }
+    
     await Scrollable.ensureVisible(
       context,
       duration: const Duration(milliseconds: 600),
@@ -96,17 +103,23 @@ class _HomeScreenState extends State<HomeScreen> {
     final dividerAlpha = lerpDouble(0.00, 0.14, _navBlendT)!;
 
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: !isDesktop ? _buildMobileDrawer(theme) : null,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // Floating navigation bar for desktop
-          if (isDesktop)
-            SliverAppBar(
+          // Responsive navigation bar
+          SliverAppBar(
               pinned: true,
               floating: false,
-              backgroundColor: Colors.transparent,
+              backgroundColor: isDesktop ? Colors.transparent : navBgColor,
               elevation: 0,
               surfaceTintColor: Colors.transparent,
+              leading: !isDesktop ? IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+              ) : null,
+              automaticallyImplyLeading: false,
               flexibleSpace: ClipRect(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(
@@ -123,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: theme.colorScheme.onSurface.withValues(alpha: dividerAlpha),
                 ),
               ),
-              title: Row(
+              title: isDesktop ? Row(
                 children: [
                   Image.asset('assets/icons/dreamflow_icon.jpg', width: 24, height: 24),
                   const SizedBox(width: 8),
@@ -146,6 +159,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildNavButton('Projects', () => _scrollTo(_projectsKey)),
                   const SizedBox(width: 20),
                   _buildNavButton('Contact', () => _scrollTo(_contactKey)),
+                ],
+              ) : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset('assets/icons/dreamflow_icon.jpg', width: 24, height: 24),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Vivek Yadav',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -183,6 +209,121 @@ class _HomeScreenState extends State<HomeScreen> {
         overlayColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
       ),
       child: Text(label),
+    );
+  }
+
+  Widget _buildMobileDrawer(ThemeData theme) {
+    return Drawer(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.surface,
+              theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Drawer Header
+              Container(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Image.asset('assets/icons/dreamflow_icon.jpg', width: 60, height: 60),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Vivek Yadav',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    Text(
+                      'Flutter Architect & GDE',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+              
+              // Navigation Items
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  children: [
+                    _buildDrawerItem(Icons.person_outline, 'About', () => _scrollTo(_aboutKey)),
+                    _buildDrawerItem(Icons.work_outline, 'Experience', () => _scrollTo(_experienceKey)),
+                    _buildDrawerItem(Icons.code, 'Skills', () => _scrollTo(_skillsKey)),
+                    _buildDrawerItem(Icons.mic_outlined, 'Speaking', () => _scrollTo(_speakingKey)),
+                    _buildDrawerItem(Icons.folder_outlined, 'Projects', () => _scrollTo(_projectsKey)),
+                    _buildDrawerItem(Icons.contact_mail_outlined, 'Contact', () => _scrollTo(_contactKey)),
+                  ],
+                ),
+              ),
+              
+              // Footer Actions
+              Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _openContactForm();
+                        },
+                        icon: const Icon(Icons.mail_outline),
+                        label: const Text('Get In Touch'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _openResume();
+                        },
+                        icon: const Icon(Icons.download_outlined),
+                        label: const Text('Download Resume'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(IconData icon, String label, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+      title: Text(
+        label,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      onTap: onTap,
+      horizontalTitleGap: 12,
     );
   }
 }

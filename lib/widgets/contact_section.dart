@@ -122,6 +122,7 @@ class ContactSection extends StatelessWidget {
     
     return Container(
       padding: const EdgeInsets.all(32),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -275,6 +276,7 @@ class ContactSection extends StatelessWidget {
     final socialLinks = PortfolioService.socialLinks;
     
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -488,7 +490,7 @@ class ContactSection extends StatelessWidget {
           children: [
             ResponsiveRowColumnItem(
               child: Text(
-                '© 2024 Vivek Yadav. All rights reserved.',
+                '© 2025 Vivek Yadav. All rights reserved.',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
@@ -501,7 +503,7 @@ class ContactSection extends StatelessWidget {
                   top: ResponsiveBreakpoints.of(context).isDesktop ? 0 : 8,
                 ),
                 child: Text(
-                  'Built with Dreamflow 💙 (dreamflow.com)',
+                  'Built with Dreamflow 💙 (dreamflow.app)',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w500,
