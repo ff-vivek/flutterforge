@@ -4,7 +4,7 @@ import 'package:vivek_yadav/services/portfolio_service.dart';
 import 'package:vivek_yadav/core/widgets/section_header.dart';
 import 'package:vivek_yadav/core/widgets/section_container.dart';
 import 'package:vivek_yadav/core/widgets/animated_section.dart';
-import 'package:vivek_yadav/core/widgets/stat_card.dart';
+import 'package:vivek_yadav/core/widgets/animated_stat_card.dart';
 import 'package:vivek_yadav/core/constants/app_spacing.dart';
 import 'package:vivek_yadav/core/constants/app_dimensions.dart';
 import 'package:vivek_yadav/core/constants/app_durations.dart';
@@ -59,19 +59,21 @@ class AboutSection extends StatelessWidget {
       return Column(
         children: stats.asMap().entries.map((entry) {
           final index = entry.key;
-          final stat = entry.value;
+          final statEntry = entry.value;
+          final statData = statEntry.value;
           final delay = AppDurations.fast + (AppDurations.fadeInStagger * index);
           
           return Padding(
             padding: EdgeInsets.only(
               bottom: index < stats.length - 1 ? AppSpacing.cardSpacing : 0,
             ),
-            child: AnimatedSection(
+            child: AnimatedStatCard(
+              value: statData['value'],
+              label: statEntry.key,
+              icon: _getIconData(statData['icon']),
+              iconColor: _getStatColor(context, statData['color']),
+              subtitle: statData['subtitle'],
               delay: delay,
-              child: StatCard(
-                value: stat.value,
-                label: stat.key,
-              ),
             ),
           );
         }).toList(),
@@ -82,26 +84,56 @@ class AboutSection extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: ResponsiveGridDelegate(
-        crossAxisExtent: 300,
+        crossAxisExtent: 320,
         mainAxisSpacing: AppSpacing.cardSpacing,
         crossAxisSpacing: AppSpacing.cardSpacing,
-        childAspectRatio: 2,
-        minCrossAxisExtent: 250,
+        childAspectRatio: 1.3,
+        minCrossAxisExtent: 280,
       ),
       alignment: Alignment.center,
       itemCount: stats.length,
       itemBuilder: (context, index) {
-        final stat = stats[index];
+        final statEntry = stats[index];
+        final statData = statEntry.value;
         final delay = AppDurations.fast + (AppDurations.fadeInStagger * index);
         
-        return AnimatedSection(
+        return AnimatedStatCard(
+          value: statData['value'],
+          label: statEntry.key,
+          icon: _getIconData(statData['icon']),
+          iconColor: _getStatColor(context, statData['color']),
+          subtitle: statData['subtitle'],
           delay: delay,
-          child: StatCard(
-            value: stat.value,
-            label: stat.key,
-          ),
         );
       },
     );
+  }
+  
+  IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'work_history':
+        return Icons.work_history;
+      case 'download':
+        return Icons.download;
+      case 'groups':
+        return Icons.groups;
+      case 'lightbulb':
+        return Icons.lightbulb;
+      default:
+        return Icons.star;
+    }
+  }
+  
+  Color _getStatColor(BuildContext context, String colorName) {
+    switch (colorName) {
+      case 'primary':
+        return context.colorScheme.primary;
+      case 'secondary':
+        return context.colorScheme.secondary;
+      case 'tertiary':
+        return context.colorScheme.tertiary;
+      default:
+        return context.colorScheme.primary;
+    }
   }
 }

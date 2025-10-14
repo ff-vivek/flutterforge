@@ -25,13 +25,31 @@ class PortfolioService {
       'Led teams of 20+ people, built apps with 20M+ downloads, and mentored 50+ startups. '
       'Passionate about EdTech, community leadership, and delivering high-impact mobile solutions for enterprises and startups.';
 
-  static const Map<String, String> keyStats = {
-    'Total Experience': '8+ years',
-    'Flutter Expertise': '7+ years',
-    'Combined Downloads': '20M+',
-    'Team Leadership': '20+ people',
-    'Startups Mentored': '50+',
-    'ZestMoney App': '6M+ downloads',
+  static const Map<String, Map<String, dynamic>> keyStats = {
+    'Years Experience': {
+      'value': '8+',
+      'icon': 'work_history',
+      'subtitle': 'Building digital products',
+      'color': 'primary',
+    },
+    'Combined Downloads': {
+      'value': '20M+',
+      'icon': 'download',
+      'subtitle': 'Across all platforms',
+      'color': 'secondary',
+    },
+    'Team Leadership': {
+      'value': '20+',
+      'icon': 'groups',
+      'subtitle': 'High-performing teams',
+      'color': 'tertiary',
+    },
+    'Startups Mentored': {
+      'value': '50+',
+      'icon': 'lightbulb',
+      'subtitle': 'From idea to launch',
+      'color': 'primary',
+    },
   };
 
   static List<Experience> getExperiences() {
