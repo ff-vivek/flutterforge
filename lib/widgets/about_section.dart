@@ -80,30 +80,34 @@ class AboutSection extends StatelessWidget {
       );
     }
     
-    return ResponsiveGridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: ResponsiveGridDelegate(
-        crossAxisExtent: 320,
-        mainAxisSpacing: AppSpacing.cardSpacing,
-        crossAxisSpacing: AppSpacing.cardSpacing,
-        childAspectRatio: 1.3,
-        minCrossAxisExtent: 280,
-      ),
-      alignment: Alignment.center,
-      itemCount: stats.length,
-      itemBuilder: (context, index) {
-        final statEntry = stats[index];
-        final statData = statEntry.value;
-        final delay = AppDurations.fast + (AppDurations.fadeInStagger * index);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = constraints.maxWidth > 800 ? 4 : 2;
+        final cardWidth = (constraints.maxWidth - (AppSpacing.cardSpacing * (crossAxisCount - 1))) / crossAxisCount;
+        final cardHeight = cardWidth * 0.8;
         
-        return AnimatedStatCard(
-          value: statData['value'],
-          label: statEntry.key,
-          icon: _getIconData(statData['icon']),
-          iconColor: _getStatColor(context, statData['color']),
-          subtitle: statData['subtitle'],
-          delay: delay,
+        return Wrap(
+          spacing: AppSpacing.cardSpacing,
+          runSpacing: AppSpacing.cardSpacing,
+          alignment: WrapAlignment.center,
+          children: stats.asMap().entries.map((entry) {
+            final index = entry.key;
+            final statEntry = entry.value;
+            final statData = statEntry.value;
+            final delay = AppDurations.fast + (AppDurations.fadeInStagger * index);
+            
+            return SizedBox(
+              width: cardWidth.clamp(200, 300),
+              child: AnimatedStatCard(
+                value: statData['value'],
+                label: statEntry.key,
+                icon: _getIconData(statData['icon']),
+                iconColor: _getStatColor(context, statData['color']),
+                subtitle: statData['subtitle'],
+                delay: delay,
+              ),
+            );
+          }).toList(),
         );
       },
     );

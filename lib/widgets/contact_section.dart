@@ -3,6 +3,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vivek_yadav/services/portfolio_service.dart';
+import 'package:vivek_yadav/core/widgets/animated_button.dart';
+import 'package:vivek_yadav/core/widgets/animated_card.dart';
+import 'package:vivek_yadav/core/widgets/animated_icon_button.dart';
 
 class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
@@ -67,7 +70,8 @@ class ContactSection extends StatelessWidget {
             
             ResponsiveRowColumn(
               layout: isDesktop ? ResponsiveRowColumnType.ROW : ResponsiveRowColumnType.COLUMN,
-              rowMainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              rowMainAxisAlignment: MainAxisAlignment.spaceAround,
+              rowCrossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Contact Information
                 ResponsiveRowColumnItem(
@@ -216,57 +220,53 @@ class ContactSection extends StatelessWidget {
   Widget _buildContactItem(BuildContext context, IconData icon, String label, String value, String? url) {
     final theme = Theme.of(context);
     
-    return InkWell(
+    return AnimatedCard(
       onTap: url != null ? () => _launchUrl(url) : null,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: theme.colorScheme.primary,
-              ),
+      padding: const EdgeInsets.all(8),
+      borderRadius: 8,
+      elevation: 0,
+      hoverElevation: 2,
+      hoverScale: 1.01,
+      child: Row(
+        children: [
+          AnimatedIconButton(
+            icon: icon,
+            onPressed: null,
+            backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+            color: theme.colorScheme.primary,
+            size: 20,
+          ),
+          
+          const SizedBox(width: 16),
+          
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
+                Text(
+                  value,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: url != null ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            
-            const SizedBox(width: 16),
-            
-            Expanded(
-              child: Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    Text(
-      label,
-      style: theme.textTheme.labelMedium?.copyWith(
-        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-      ),
-    ),
-    Text(
-      value,
-      style: theme.textTheme.bodyMedium?.copyWith(
-        color: url != null ? theme.colorScheme.primary : theme.colorScheme.onSurface,
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  ],
-),
+          ),
+          
+          if (url != null)
+            Icon(
+              Icons.launch,
+              size: 16,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
-            
-            if (url != null)
-              Icon(
-                Icons.launch,
-                size: 16,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -275,21 +275,9 @@ class ContactSection extends StatelessWidget {
     final theme = Theme.of(context);
     final socialLinks = PortfolioService.socialLinks;
     
-    return Container(
-      width: double.infinity,
+    return AnimatedCard(
       padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      borderRadius: 16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -304,7 +292,7 @@ class ContactSection extends StatelessWidget {
           const SizedBox(height: 8),
           
           Text(
-            'Follow my journey and stay updated',
+            'Connect with me!',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
@@ -437,15 +425,18 @@ class ContactSection extends StatelessWidget {
             rowMainAxisAlignment: MainAxisAlignment.center,
             children: [
               ResponsiveRowColumnItem(
-                child: ElevatedButton.icon(
+                child: AnimatedButton(
                   onPressed: () => _launchUrl('https://forms.gle/wnAwr5pwEr6SWAdQ6'),
-                  icon: const Icon(Icons.mail_outline),
-                  label: const Text('Get In Touch'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    elevation: 0,
+                  child: ElevatedButton.icon(
+                    onPressed: null, // Handled by AnimatedButton
+                    icon: const Icon(Icons.mail_outline),
+                    label: const Text('Get In Touch'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      elevation: 0,
+                    ),
                   ),
                 ),
               ),

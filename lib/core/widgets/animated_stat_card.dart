@@ -115,9 +115,10 @@ class _AnimatedStatCardState extends State<AnimatedStatCard>
               child: Transform.scale(
                 scale: _scaleAnimation.value,
                 child: GlassCard(
-                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  padding: const EdgeInsets.all(AppSpacing.md),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       if (widget.icon != null) ...[
                         AnimatedContainer(
@@ -125,56 +126,72 @@ class _AnimatedStatCardState extends State<AnimatedStatCard>
                           padding: const EdgeInsets.all(AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: (widget.iconColor ?? context.colorScheme.primary).withValues(
-                              alpha: _isHovered ? 0.2 : 0.1,
+                              alpha: _isHovered ? 0.15 : 0.08,
                             ),
                             borderRadius: BorderRadius.circular(50),
                           ),
                           child: Icon(
                             widget.icon,
-                            size: 32,
+                            size: 24,
                             color: widget.iconColor ?? context.colorScheme.primary,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.md),
+                        const SizedBox(height: AppSpacing.xs),
                       ],
                       
                       // Animated Counter
-                      AnimatedBuilder(
-                        animation: _controller,
-                        builder: (context, child) {
-                          final progress = _controller.value;
-                          final animatedValue = _calculateAnimatedValue(widget.value, progress);
-                          
-                          return Text(
-                            animatedValue,
-                            style: context.textTheme.headlineMedium?.copyWith(
-                              color: context.colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: _isHovered ? 32 : 28,
-                            ),
-                          );
-                        },
+                      Flexible(
+                        child: AnimatedBuilder(
+                          animation: _controller,
+                          builder: (context, child) {
+                            final progress = _controller.value;
+                            final animatedValue = _calculateAnimatedValue(widget.value, progress);
+                            
+                            return FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                animatedValue,
+                                style: context.textTheme.headlineSmall?.copyWith(
+                                  color: context.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                ),
+                                maxLines: 1,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                       
-                      const SizedBox(height: AppSpacing.sm),
+                      const SizedBox(height: AppSpacing.xxs),
                       
-                      Text(
-                        widget.label,
-                        style: context.textTheme.titleMedium?.copyWith(
-                          color: context.colorScheme.onSurface.muted,
-                          fontWeight: FontWeight.w500,
+                      Flexible(
+                        child: Text(
+                          widget.label,
+                          style: context.textTheme.titleSmall?.copyWith(
+                            color: context.colorScheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       
                       if (widget.subtitle != null) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          widget.subtitle!,
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: context.colorScheme.onSurface.subtle,
+                        const SizedBox(height: 2),
+                        Flexible(
+                          child: Text(
+                            widget.subtitle!,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: context.colorScheme.onSurface.withValues(alpha: 0.7),
+                              fontSize: 11,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ],
                     ],

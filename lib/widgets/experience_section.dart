@@ -3,6 +3,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:vivek_yadav/models/experience.dart';
 import 'package:vivek_yadav/services/portfolio_service.dart';
+import 'package:vivek_yadav/core/widgets/animated_card.dart';
+import 'package:vivek_yadav/core/widgets/tech_chip.dart';
 
 class ExperienceSection extends StatelessWidget {
   const ExperienceSection({super.key});
@@ -101,20 +103,11 @@ class ExperienceSection extends StatelessWidget {
           
           // Experience content
           Expanded(
-            child: Container(
+            child: AnimatedCard(
               padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.shadowColor.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
+              borderRadius: 16,
+              backgroundColor: theme.colorScheme.surface,
+              hoverScale: 1.01,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

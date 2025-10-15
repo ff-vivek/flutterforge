@@ -3,6 +3,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:vivek_yadav/models/skill.dart';
 import 'package:vivek_yadav/services/portfolio_service.dart';
+import 'package:vivek_yadav/core/widgets/animated_card.dart';
+import 'package:vivek_yadav/core/widgets/tech_chip.dart';
 
 class SkillsSection extends StatelessWidget {
   const SkillsSection({super.key});
@@ -116,22 +118,11 @@ class SkillsSection extends StatelessWidget {
     return FadeInUp(
       delay: delay,
       duration: const Duration(milliseconds: 600),
-      child: Container(
-        width: double.infinity,
-        constraints: const BoxConstraints(maxWidth: 1000),
+      child: AnimatedCard(
         padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-          boxShadow: [
-            BoxShadow(
-              color: theme.shadowColor.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+        borderRadius: 16,
+        backgroundColor: theme.colorScheme.surface,
+        hoverScale: 1.01,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -161,14 +152,13 @@ class SkillsSection extends StatelessWidget {
   Widget _buildSkillChip(BuildContext context, Skill skill, Color categoryColor) {
     final theme = Theme.of(context);
     
-    return Container(
+    return AnimatedCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: categoryColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: categoryColor.withValues(alpha: 0.3)),
-      ),
+      borderRadius: 20,
+      backgroundColor: categoryColor.withValues(alpha: 0.1),
+      elevation: 1,
+      hoverElevation: 3,
+      hoverScale: 1.03,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

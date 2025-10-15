@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:vivek_yadav/services/theme_service.dart';
 import 'package:vivek_yadav/services/portfolio_service.dart';
 import 'package:vivek_yadav/widgets/ai_background.dart';
+import 'package:vivek_yadav/core/widgets/animated_button.dart';
+import 'package:vivek_yadav/core/widgets/animated_icon_button.dart';
 
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key, this.onContactTap, this.onDownloadResume});
@@ -170,21 +172,8 @@ class HeroSection extends StatelessWidget {
       {'label': 'Startups Mentored', 'value': '50+'},
     ];
 
-    // Desktop: 4 columns (single row), Tablet: 2 columns (two rows), Mobile: 2 columns
-    final crossAxisCount = isLandscapeTablet ? 2 : (isDesktop ? 4 : (isTablet ? 2 : 2));
-    // Make tiles taller on tablets to avoid bottom overflow, especially in landscape
-    final textScale = MediaQuery.of(context).textScaleFactor;
-    // Smaller aspect ratio => taller tiles. Make tiles taller on tablets/landscape and when text scale is larger
-    final childAspectRatio = isDesktop
-        ? 3.0
-        : (isLandscapeTablet
-            ? (textScale > 1.1 ? 0.68 : 0.74)
-            : (isTablet
-                ? (textScale > 1.1 ? 0.6 : 0.9)
-                : (textScale > 1.1 ? 1.1 : 1.25)));
-    
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: isDesktop ? 24 : 14),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -197,69 +186,86 @@ class HeroSection extends StatelessWidget {
           ),
         ],
       ),
-      child: GridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: crossAxisCount,
-        childAspectRatio: childAspectRatio,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        
-        children: stats.map((stat) => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              stat['value']!,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
-                height: 1.0,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final crossAxisCount = isDesktop ? 4 : 2;
+          final itemWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
+          
+          return Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: stats.map((stat) => SizedBox(
+              width: itemWidth,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      stat['value']!,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        height: 1.0,
+                      ),
+                      maxLines: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    stat['label']!,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      height: 1.1,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 6),
-            Flexible(
-              child: Text(
-                stat['label']!,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  height: 1.1,
-                ),
-                textAlign: TextAlign.center,
-                softWrap: true,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        )).toList(),
+            )).toList(),
+          );
+        },
       ),
     );
   }
 
   Widget _buildActionButtons(BuildContext context, bool isDesktop) {
+    final theme = Theme.of(context);
+    
     if (isDesktop) {
       return Wrap(
         spacing: 16,
         runSpacing: 12,
         children: [
-          ElevatedButton.icon(
+          AnimatedButton(
             onPressed: onContactTap,
-            icon: const Icon(Icons.mail_outline),
-            label: const Text('Get In Touch'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              elevation: 2,
+            child: ElevatedButton.icon(
+              onPressed: () {}, // Handled by AnimatedButton wrapper
+              icon: const Icon(Icons.mail_outline),
+              label: const Text('Get In Touch'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade900,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                elevation: 2,
+              ),
             ),
           ),
-          OutlinedButton.icon(
+          AnimatedButton(
             onPressed: onDownloadResume,
-            icon: const Icon(Icons.download_outlined),
-            label: const Text('Download Resume'),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: ElevatedButton.icon(
+              onPressed: () {}, // Handled by AnimatedButton wrapper
+              icon: const Icon(Icons.download_outlined),
+              label: const Text('Download Resume'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade900,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                elevation: 2,
+              ),
             ),
           ),
         ],
@@ -267,24 +273,35 @@ class HeroSection extends StatelessWidget {
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ElevatedButton.icon(
+        AnimatedButton(
           onPressed: onContactTap,
-          icon: const Icon(Icons.mail_outline),
-          label: const Text('Get In Touch'),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            elevation: 2,
+          child: ElevatedButton(
+            onPressed: () {}, // Handled by AnimatedButton wrapper
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue.shade900,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              elevation: 2,
+            ),
+            child: const Text('Get In Touch'),
           ),
         ),
-        const SizedBox(height: 16),
-        OutlinedButton.icon(
+        const SizedBox(height: 12),
+        AnimatedButton(
           onPressed: onDownloadResume,
-          icon: const Icon(Icons.download_outlined),
-          label: const Text('Download Resume'),
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: ElevatedButton.icon(
+            onPressed: () {}, // Handled by AnimatedButton wrapper
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue.shade900,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              elevation: 2,
+            ),
+            icon: const Icon(Icons.download_outlined),
+            label: const Text('Download Resume'),
           ),
         ),
       ],
@@ -356,14 +373,14 @@ class HeroSection extends StatelessWidget {
   Widget _buildThemeToggle(BuildContext context) {
     return Consumer<ThemeService>(
       builder: (context, themeService, child) {
-        return FloatingActionButton.small(
+        return AnimatedIconButton(
+          icon: themeService.isDarkMode ? Icons.light_mode : Icons.dark_mode,
           onPressed: themeService.toggleTheme,
           backgroundColor: Theme.of(context).colorScheme.surface,
-          elevation: 2,
-          child: Icon(
-            themeService.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          color: Theme.of(context).colorScheme.primary,
+          size: 20,
+          rotateOnHover: true,
+          tooltip: themeService.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
         );
       },
     );

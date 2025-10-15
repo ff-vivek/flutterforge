@@ -3,6 +3,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:vivek_yadav/models/speaking_topic.dart';
 import 'package:vivek_yadav/services/portfolio_service.dart';
+import 'package:vivek_yadav/core/widgets/animated_card.dart';
+import 'package:vivek_yadav/core/widgets/animated_button.dart';
+import 'package:vivek_yadav/core/widgets/tech_chip.dart';
 
 class SpeakingSection extends StatelessWidget {
   const SpeakingSection({super.key, this.onInviteToSpeak});
@@ -100,20 +103,11 @@ class SpeakingSection extends StatelessWidget {
   Widget _buildSpeakingTopics(BuildContext context, List<SpeakingTopic> topics, bool isDesktop) {
     final theme = Theme.of(context);
     
-    return Container(
+    return AnimatedCard(
       padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      borderRadius: 16,
+      backgroundColor: theme.colorScheme.surface,
+      hoverScale: 1.01,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -140,12 +134,15 @@ class SpeakingSection extends StatelessWidget {
           
           const SizedBox(height: 16),
           
-          ElevatedButton.icon(
+          AnimatedButton(
             onPressed: onInviteToSpeak,
-            icon: const Icon(Icons.campaign),
-            label: const Text('Invite Me to Speak'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: ElevatedButton.icon(
+              onPressed: null, // Handled by AnimatedButton
+              icon: const Icon(Icons.campaign),
+              label: const Text('Invite Me to Speak'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
             ),
           ),
         ],
@@ -156,14 +153,14 @@ class SpeakingSection extends StatelessWidget {
   Widget _buildTopicCard(BuildContext context, SpeakingTopic topic) {
     final theme = Theme.of(context);
     
-    return Container(
+    return AnimatedCard(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
-      ),
+      borderRadius: 12,
+      backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
+      elevation: 1,
+      hoverElevation: 3,
+      hoverScale: 1.02,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

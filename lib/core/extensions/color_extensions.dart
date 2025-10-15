@@ -7,15 +7,15 @@ extension ColorExtensions on Color {
     return Color.fromRGBO(red, green, blue, opacity);
   }
   
-  /// Returns color with 10% opacity
-  Color get subtle => withValues(alpha: 0.1);
+  /// Returns color with 15% opacity
+  Color get subtle => withValues(alpha: 0.15);
   
-  /// Returns color with 20% opacity
-  Color get light => withValues(alpha: 0.2);
+  /// Returns color with 25% opacity
+  Color get light => withValues(alpha: 0.25);
   
-  /// Returns color with 30% opacity
-  Color get medium => withValues(alpha: 0.3);
+  /// Returns color with 40% opacity
+  Color get medium => withValues(alpha: 0.4);
   
-  /// Returns color with 80% opacity
-  Color get muted => withValues(alpha: 0.8);
+  /// Returns color with 75% opacity
+  Color get muted => withValues(alpha: 0.75);
 }

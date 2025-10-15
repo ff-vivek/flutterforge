@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vivek_yadav/models/project.dart';
-import 'package:vivek_yadav/core/widgets/glass_card.dart';
+import 'package:vivek_yadav/core/widgets/animated_card.dart';
+import 'package:vivek_yadav/core/widgets/animated_button.dart';
 import 'package:vivek_yadav/core/widgets/tech_chip.dart';
 import 'package:vivek_yadav/core/widgets/impact_badge.dart';
 import 'package:vivek_yadav/core/constants/app_spacing.dart';
@@ -18,7 +19,9 @@ class ProjectCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => GlassCard(
+  Widget build(BuildContext context) => AnimatedCard(
+    borderRadius: AppDimensions.radiusLg,
+    backgroundColor: context.colorScheme.surface.withOpacity(0.7),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -90,16 +93,23 @@ class ProjectCard extends StatelessWidget {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       if (project.githubUrl != null)
-        TextButton.icon(
+        AnimatedButton(
           onPressed: () => UrlLauncherHelper.launchURL(project.githubUrl!),
-          icon: const Icon(Icons.code, size: AppDimensions.iconSm),
-          label: const Text('Code'),
+          isElevated: false,
+          child: TextButton.icon(
+            onPressed: null, // Handled by AnimatedButton
+            icon: const Icon(Icons.code, size: AppDimensions.iconSm),
+            label: const Text('Code'),
+          ),
         ),
       if (project.liveUrl != null)
-        ElevatedButton.icon(
+        AnimatedButton(
           onPressed: () => UrlLauncherHelper.launchURL(project.liveUrl!),
-          icon: const Icon(Icons.launch, size: AppDimensions.iconSm),
-          label: const Text('View'),
+          child: ElevatedButton.icon(
+            onPressed: null, // Handled by AnimatedButton
+            icon: const Icon(Icons.launch, size: AppDimensions.iconSm),
+            label: const Text('View'),
+          ),
         ),
     ],
   );
