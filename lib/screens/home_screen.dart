@@ -40,7 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    final offset = _scrollController.hasClients ? _scrollController.offset : 0.0;
+    final offset =
+        _scrollController.hasClients ? _scrollController.offset : 0.0;
     const threshold = 240.0; // how quickly the bar becomes solid
     final t = (offset / threshold).clamp(0.0, 1.0);
     if ((t - _navBlendT).abs() > 0.01) {
@@ -58,12 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _scrollTo(GlobalKey key) async {
     final context = key.currentContext;
     if (context == null) return;
-    
+
     // Close drawer if open (for mobile)
     if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
       Navigator.of(this.context).pop();
     }
-    
+
     await Scrollable.ensureVisible(
       context,
       duration: const Duration(milliseconds: 600),
@@ -75,7 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _openResume() async {
     final linkedin = PortfolioService.socialLinks['linkedin'];
     final linkedinUri = linkedin != null ? Uri.parse(linkedin) : null;
-
 
     // 2) Navigate user to LinkedIn (prefer in the same tab on web)
     if (linkedinUri != null && await canLaunchUrl(linkedinUri)) {
@@ -96,8 +96,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDesktop = ResponsiveBreakpoints.of(context).isDesktop;
 
     // Navbar color logic: match hero at top, morph to glassy black on scroll
-    final heroTopColor = Color.lerp(theme.colorScheme.surface, theme.colorScheme.primaryContainer, 0.22)!;
-    final glassBase = Color.lerp(theme.colorScheme.surface, theme.colorScheme.primaryContainer, 0.12)!;
+    final heroTopColor = Color.lerp(
+        theme.colorScheme.surface, theme.colorScheme.primaryContainer, 0.22)!;
+    final glassBase = Color.lerp(
+        theme.colorScheme.surface, theme.colorScheme.primaryContainer, 0.12)!;
     final targetGlassy = glassBase.withValues(alpha: 0.20);
     final navBgColor = Color.lerp(heroTopColor, targetGlassy, _navBlendT)!;
     final dividerAlpha = lerpDouble(0.00, 0.14, _navBlendT)!;
@@ -108,93 +110,104 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // Responsive navigation bar
           SliverAppBar(
-              pinned: true,
-              floating: false,
-              backgroundColor: isDesktop ? Colors.transparent : navBgColor,
-              elevation: 0,
-              surfaceTintColor: Colors.transparent,
-              leading: !isDesktop ? IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-              ) : null,
-              automaticallyImplyLeading: false,
-              flexibleSpace: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: lerpDouble(0, 16, _navBlendT)!,
-                    sigmaY: lerpDouble(0, 16, _navBlendT)!,
-                  ),
-                  child: Container(color: navBgColor),
+            pinned: true,
+            floating: false,
+            backgroundColor: isDesktop ? Colors.transparent : navBgColor,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            leading: !isDesktop
+                ? IconButton(
+                    icon: const Icon(Icons.menu),
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                  )
+                : null,
+            automaticallyImplyLeading: false,
+            flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: lerpDouble(0, 16, _navBlendT)!,
+                  sigmaY: lerpDouble(0, 16, _navBlendT)!,
                 ),
-              ),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(1),
-                child: Container(
-                  height: 1,
-                  color: theme.colorScheme.onSurface.withValues(alpha: dividerAlpha),
-                ),
-              ),
-              title: isDesktop ? Row(
-                children: [
-                  Image.asset('assets/icons/dreamflow_icon.jpg', width: 24, height: 24),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Vivek Yadav',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                  const Spacer(),
-                  _buildNavButton('About', () => _scrollTo(_aboutKey)),
-                  const SizedBox(width: 20),
-                  _buildNavButton('Experience', () => _scrollTo(_experienceKey)),
-                  const SizedBox(width: 20),
-                  _buildNavButton('Skills', () => _scrollTo(_skillsKey)),
-                  const SizedBox(width: 20),
-                  _buildNavButton('Speaking', () => _scrollTo(_speakingKey)),
-                  const SizedBox(width: 20),
-                  _buildNavButton('Projects', () => _scrollTo(_projectsKey)),
-                  const SizedBox(width: 20),
-                  _buildNavButton('Contact', () => _scrollTo(_contactKey)),
-                ],
-              ) : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset('assets/icons/dreamflow_icon.jpg', width: 24, height: 24),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Vivek Yadav',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ],
+                child: Container(color: navBgColor),
               ),
             ),
-
-          // Hero Section
-          SliverToBoxAdapter(child: HeroSection(onContactTap: _openContactForm, onDownloadResume: _openResume)),
-
-          // About Section
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(
+                height: 1,
+                color:
+                    theme.colorScheme.onSurface.withValues(alpha: dividerAlpha),
+              ),
+            ),
+            title: isDesktop
+                ? Row(
+                    children: [
+                      Image.asset(
+                        'assets/icons/dreamflow_icon.jpg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Vivek Yadav',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      const Spacer(),
+                      _buildNavButton('About', () => _scrollTo(_aboutKey)),
+                      const SizedBox(width: 20),
+                      _buildNavButton(
+                          'Experience', () => _scrollTo(_experienceKey)),
+                      const SizedBox(width: 20),
+                      _buildNavButton('Skills', () => _scrollTo(_skillsKey)),
+                      const SizedBox(width: 20),
+                      _buildNavButton(
+                          'Speaking', () => _scrollTo(_speakingKey)),
+                      const SizedBox(width: 20),
+                      _buildNavButton(
+                          'Projects', () => _scrollTo(_projectsKey)),
+                      const SizedBox(width: 20),
+                      _buildNavButton('Contact', () => _scrollTo(_contactKey)),
+                    ],
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        'assets/icons/dreamflow_icon.jpg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Vivek Yadav',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+          SliverToBoxAdapter(
+            child: HeroSection(
+              onContactTap: _openContactForm,
+              onDownloadResume: _openResume,
+            ),
+          ),
           SliverToBoxAdapter(child: AboutSection(key: _aboutKey)),
-
-          // Experience Section
           SliverToBoxAdapter(child: ExperienceSection(key: _experienceKey)),
-
-          // Skills Section
           SliverToBoxAdapter(child: SkillsSection(key: _skillsKey)),
-
-          // Speaking Section
-          SliverToBoxAdapter(child: SpeakingSection(key: _speakingKey, onInviteToSpeak: () => _scrollTo(_contactKey))),
-
-          // Projects Section
+          SliverToBoxAdapter(
+            child: SpeakingSection(
+              key: _speakingKey,
+              onInviteToSpeak: () => _scrollTo(_contactKey),
+            ),
+          ),
           SliverToBoxAdapter(child: ProjectsSection(key: _projectsKey)),
-
-          // Contact Section
           SliverToBoxAdapter(child: ContactSection(key: _contactKey)),
         ],
       ),
@@ -206,7 +219,8 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: onTap,
       style: TextButton.styleFrom(
         foregroundColor: Theme.of(context).colorScheme.onSurface,
-        overlayColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+        overlayColor:
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
       ),
       child: Text(label),
     );
@@ -233,7 +247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    Image.asset('assets/icons/dreamflow_icon.jpg', width: 60, height: 60),
+                    Image.asset('assets/icons/dreamflow_icon.jpg',
+                        width: 60, height: 60),
                     const SizedBox(height: 12),
                     Text(
                       'Vivek Yadav',
@@ -245,29 +260,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       'Flutter Architect & GDE',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
                 ),
               ),
               Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-              
+
               // Navigation Items
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   children: [
-                    _buildDrawerItem(Icons.person_outline, 'About', () => _scrollTo(_aboutKey)),
-                    _buildDrawerItem(Icons.work_outline, 'Experience', () => _scrollTo(_experienceKey)),
-                    _buildDrawerItem(Icons.code, 'Skills', () => _scrollTo(_skillsKey)),
-                    _buildDrawerItem(Icons.mic_outlined, 'Speaking', () => _scrollTo(_speakingKey)),
-                    _buildDrawerItem(Icons.folder_outlined, 'Projects', () => _scrollTo(_projectsKey)),
-                    _buildDrawerItem(Icons.contact_mail_outlined, 'Contact', () => _scrollTo(_contactKey)),
+                    _buildDrawerItem(Icons.person_outline, 'About',
+                        () => _scrollTo(_aboutKey)),
+                    _buildDrawerItem(Icons.work_outline, 'Experience',
+                        () => _scrollTo(_experienceKey)),
+                    _buildDrawerItem(
+                        Icons.code, 'Skills', () => _scrollTo(_skillsKey)),
+                    _buildDrawerItem(Icons.mic_outlined, 'Speaking',
+                        () => _scrollTo(_speakingKey)),
+                    _buildDrawerItem(Icons.folder_outlined, 'Projects',
+                        () => _scrollTo(_projectsKey)),
+                    _buildDrawerItem(Icons.contact_mail_outlined, 'Contact',
+                        () => _scrollTo(_contactKey)),
                   ],
                 ),
               ),
-              
+
               // Footer Actions
               Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
               Padding(
@@ -319,8 +341,8 @@ class _HomeScreenState extends State<HomeScreen> {
       title: Text(
         label,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w500,
-        ),
+              fontWeight: FontWeight.w500,
+            ),
       ),
       onTap: onTap,
       horizontalTitleGap: 12,

@@ -1,222 +1,155 @@
 import 'package:flutter/material.dart';
-import 'package:animate_do/animate_do.dart';
-import 'package:responsive_framework/responsive_framework.dart';
-import 'package:vivek_yadav/models/experience.dart';
-import 'package:vivek_yadav/services/portfolio_service.dart';
+import 'package:vivek_yadav/core/constants/app_spacing.dart';
+import 'package:vivek_yadav/core/extensions/context_extensions.dart';
+import 'package:vivek_yadav/core/widgets/animated_section.dart';
+import 'package:vivek_yadav/core/widgets/section_container.dart';
+import 'package:vivek_yadav/core/widgets/section_header.dart';
+import 'package:vivek_yadav/core/widgets/glass_card.dart';
 import 'package:vivek_yadav/core/widgets/animated_card.dart';
-import 'package:vivek_yadav/core/widgets/tech_chip.dart';
+import 'package:vivek_yadav/core/widgets/circular_experience_timeline.dart';
+import 'package:vivek_yadav/services/portfolio_service.dart';
+import 'package:vivek_yadav/models/experience.dart';
 
 class ExperienceSection extends StatelessWidget {
   const ExperienceSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = ResponsiveBreakpoints.of(context).isDesktop;
-    final theme = Theme.of(context);
     final experiences = PortfolioService.getExperiences();
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 80 : 32,
-        vertical: isDesktop ? 100 : 60,
-      ),
-      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.05),
-      child: FadeInUp(
-        duration: const Duration(milliseconds: 800),
+    return SectionContainer(
+      child: AnimatedSection(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Section Title
-            Text(
-              'Professional Experience',
-              style: theme.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            
-            const SizedBox(height: 16),
-            
-            Container(
-              width: 60,
-              height: 4,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(2),
+            const SectionHeader(title: 'Experience'),
+            const SizedBox(height: AppSpacing.xl),
+            // Circular Timeline Overview
+            Center(
+              child: CircularExperienceTimeline(
+                experiences: experiences,
+                size: 400,
               ),
             ),
-            
-            const SizedBox(height: 60),
-            
-            // Experience Timeline
-            Column(
-              children: experiences.asMap().entries.map((entry) {
-                final index = entry.key;
-                final experience = entry.value;
-                final delay = Duration(milliseconds: 200 + (index * 150));
-                
-                return FadeInUp(
-                  delay: delay,
-                  duration: const Duration(milliseconds: 600),
-                  child: _buildExperienceCard(context, experience, isDesktop),
-                );
-              }).toList(),
-            ),
+            const SizedBox(height: AppSpacing.xl),
+            if (context.isDesktop)
+              _buildDesktopLayout(experiences, context)
+            else
+              _buildMobileLayout(experiences, context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildExperienceCard(BuildContext context, Experience experience, bool isDesktop) {
-    final theme = Theme.of(context);
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 32),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Timeline indicator
-          Column(
+  Widget _buildDesktopLayout(List<Experience> experiences, BuildContext context) {
+    return Column(
+      children: experiences.asMap().entries.map((entry) {
+        final index = entry.key;
+        return Padding(
+          padding: EdgeInsets.only(bottom: index < experiences.length - 1 ? AppSpacing.lg : 0),
+          child: _buildExperienceCard(experience: entry.value, context: context),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildMobileLayout(List<Experience> experiences, BuildContext context) {
+    return Column(
+      children: experiences.asMap().entries.map((entry) {
+        final index = entry.key;
+        return Padding(
+          padding: EdgeInsets.only(bottom: index < experiences.length - 1 ? AppSpacing.lg : 0),
+          child: _buildExperienceCard(experience: entry.value, context: context),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildExperienceCard({required Experience experience, required BuildContext context}) {
+    return AnimatedCard(
+      child: GlassCard(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: experience.isCurrent ? theme.colorScheme.primary : theme.colorScheme.tertiary,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: theme.colorScheme.surface,
-                    width: 3,
-                  ),
-                ),
-              ),
-              Container(
-                width: 2,
-                height: 100,
-                color: theme.colorScheme.outline.withValues(alpha: 0.3),
-              ),
-            ],
-          ),
-          
-          const SizedBox(width: 24),
-          
-          // Experience content
-          Expanded(
-            child: AnimatedCard(
-              padding: const EdgeInsets.all(32),
-              borderRadius: 16,
-              backgroundColor: theme.colorScheme.surface,
-              hoverScale: 1.01,
-              child: Column(
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Company and Current badge
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          experience.company,
-                          style: theme.textTheme.headlineSmall?.copyWith(
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          experience.position,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary,
                           ),
                         ),
-                      ),
-                      if (experience.isCurrent)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.tertiary.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            'Current',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.tertiary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          experience.company,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 8),
-                  
-                  // Position
-                  Text(
-                    experience.position,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 4),
-                  
-                  // Duration and Location
-                  Text(
-                    '${experience.duration} • ${experience.location}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Description
-                  Text(
-                    experience.description,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      height: 1.5,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Achievements
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Key Achievements:',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.onSurface,
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          experience.duration,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      ...experience.achievements.map((achievement) => Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              size: 16,
-                              color: theme.colorScheme.tertiary,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                achievement,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  height: 1.4,
-                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )).toList(),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                experience.description,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Key Achievements:',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  ...experience.achievements.map((achievement) => Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 6, right: 8),
+                          width: 4,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            achievement,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
