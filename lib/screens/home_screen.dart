@@ -10,6 +10,7 @@ import 'package:vivek_yadav/widgets/skills_section.dart';
 import 'package:vivek_yadav/widgets/speaking_section.dart';
 import 'package:vivek_yadav/widgets/projects_section.dart';
 import 'package:vivek_yadav/widgets/contact_section.dart';
+import 'package:vivek_yadav/screens/flappy_bird_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -196,6 +197,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: HeroSection(
               onContactTap: _openContactForm,
               onDownloadResume: _openResume,
+              onPlayFlappy: () {
+                print('hello');
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const FlappyBirdScreen(),
+                  ),
+                );
+              },
             ),
           ),
           SliverToBoxAdapter(child: AboutSection(key: _aboutKey)),

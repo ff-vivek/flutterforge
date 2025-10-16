@@ -9,10 +9,11 @@ import 'package:vivek_yadav/core/widgets/animated_button.dart';
 import 'package:vivek_yadav/core/widgets/animated_icon_button.dart';
 
 class HeroSection extends StatelessWidget {
-  const HeroSection({super.key, this.onContactTap, this.onDownloadResume});
+  const HeroSection({super.key, this.onContactTap, this.onDownloadResume, this.onPlayFlappy});
 
   final VoidCallback? onContactTap;
   final VoidCallback? onDownloadResume;
+  final VoidCallback? onPlayFlappy;
 
   @override
   Widget build(BuildContext context) {
@@ -268,6 +269,20 @@ class HeroSection extends StatelessWidget {
               ),
             ),
           ),
+          // AnimatedButton(
+          //   onPressed: onPlayFlappy,
+             ElevatedButton.icon(
+              onPressed: onPlayFlappy, // Handled by AnimatedButton wrapper
+              icon: const Icon(Icons.sports_esports),
+              label: const Text('Play Flappy Bird'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade900,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                elevation: 2,
+              ),
+            // ),
+          ),
         ],
       );
     }
@@ -302,6 +317,21 @@ class HeroSection extends StatelessWidget {
             ),
             icon: const Icon(Icons.download_outlined),
             label: const Text('Download Resume'),
+          ),
+        ),
+        const SizedBox(height: 12),
+        AnimatedButton(
+          onPressed: onPlayFlappy,
+          child: ElevatedButton.icon(
+            onPressed: () {}, // Handled by AnimatedButton wrapper
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue.shade900,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              elevation: 2,
+            ),
+            icon: const Icon(Icons.sports_esports),
+            label: const Text('Play Flappy Bird'),
           ),
         ),
       ],
